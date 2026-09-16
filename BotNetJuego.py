@@ -72,11 +72,11 @@ def juego():
                     case 2:
                         numero_ataque = random.randint(1, 10)
                         print("\nAdivina (1-10): \n1. Mayor a 5\n2. Menor a 5\n3. Igual a 5")
-                        opc_fuerte = solicitar_opcion()
-                        if (opc_fuerte == 1 and numero_ataque > 5) or (opc_fuerte == 2 and numero_ataque < 5):
+                        opcion = solicitar_opcion()
+                        if (opcion == 1 and numero_ataque > 5) or (opcion == 2 and numero_ataque < 5):
                             nivel_amenaza -= 20
                             print(f"¡Acertaste ({numero_ataque})! Amenaza baja a {nivel_amenaza}")
-                        elif opc_fuerte == 3 and numero_ataque == 5:
+                        elif opcion == 3 and numero_ataque == 5:
                             nivel_amenaza -= 30
                             print(f"¡CRÍTICO (5)! Amenaza baja a {nivel_amenaza}")
                         else:
