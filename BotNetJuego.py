@@ -1,7 +1,7 @@
 import random
 
 def menu():
-    print("=" * 8 + " JUEGO BOT NET " + "=" * 9)
+    print("=" * 8 + " JUEGO  BOT NET " + "=" * 8)
     print("1. Comenzar")
     print("2. Salir")
     print("=" * 32)
@@ -12,6 +12,17 @@ def solicitar_opcion():
             return int(input("Seleccione una opcion: "))
         except:
             print("Error. Eliga un numero valido.\n")
+
+def solicitar_rango_de_opciones(rango: list):
+    while True:
+        try:
+            opcion = int(input("Tu respuesta: "))
+            if opcion in rango:
+                return opcion
+            else:
+                print("Error. Ingrese un numero entre las opciones.")
+        except:
+            print("Error. Ingrese un numero valido.")
 
 def juego():
     # vida
@@ -27,38 +38,30 @@ def juego():
             case _:
                 nivel_amenaza = random.randint(300, 500)
         # inicio de combate
-        print("\nINICIANDO COMBATE CONTRA NODO", nodo)
+        print(f"\n=== INICIANDO COMBATE CONTRA NODO {nodo} ===")
         print("NIVEL DE AMENAZA:", nivel_amenaza)
         turno = 1
         nodo_neutralizado = False
         # loop interno, turnos
         while turno <= 10 and not nodo_neutralizado and seguridad > 0:
-            print("=" * 32)
-            print(f"TURNO {turno}/10 - NODO {nodo}/3")
-            print("=" * 32)
+            print(f"\n=== TURNO {turno}/10 - NODO {nodo}/3 ===")
             numero_defensa = random.randint(1, 3)
             print("BOT ATACA. ADIVINA EL NUMERO (1, 2 o 3)")
             # loop para pedir la defensa
-            while True:
-                try:
-                    defensa = int(input("Tu respuesta: "))
-                    if defensa in [1, 2, 3]:
-                        break
-                    else:
-                        print("Error. Ingrese un numero entre las opciones.")
-                except:
-                    print("Error. Ingrese un numero valido.")
+            defensa = solicitar_rango_de_opciones([1, 2, 3])
             if defensa == numero_defensa:
-                print("\nDEFENSA EXITOSA")
+                print("\n>>> DEFENSA EXITOSA <<<")
             else:
                 daño = random.randint(10, 20)
                 seguridad -= daño
-                print("\nDEFENSA FALLIDA")
+                print(f"\n>>> DEFENSA FALLIDA (Era {numero_defensa}) <<<")
+            # jugador se quedo sin vida
             if seguridad <= 0:
-                print("\nHAS PERDIDO")
+                print("\nHAS PERDIDO. LA SEGURIDAD LLEGO A 0.")
                 return
             turno_gastado = False
             while not turno_gastado and not nodo_neutralizado and seguridad > 0:
+                print("\n=== MENU DE ACCIONES ===")
                 print("1. Ataque Debil")
                 print("2. Ataque Fuerte")
                 print("3. Analizar Estado")
@@ -67,63 +70,71 @@ def juego():
                 match accion:
                     case 1:
                         nivel_amenaza -= 10
-                        print(f"Ataque débil. Amenaza baja a {nivel_amenaza}")
+                        print(f"\n>>> ATAQUE DEBIL EJECUTADO. Amenaza baja a {nivel_amenaza}. <<<")
                         turno_gastado = True
                     case 2:
                         numero_ataque = random.randint(1, 10)
-                        print("\nAdivina (1-10): \n1. Mayor a 5\n2. Menor a 5\n3. Igual a 5")
-                        opcion = solicitar_opcion()
+                        print("\n=== Adivina el numero (1-10): ===")
+                        print("1. Mayor a 5")
+                        print("2. Menor a 5")
+                        print("3. Igual a 5")
+                        print("=" * 32)
+                        opcion = solicitar_rango_de_opciones([1, 2, 3])
                         if (opcion == 1 and numero_ataque > 5) or (opcion == 2 and numero_ataque < 5):
                             nivel_amenaza -= 20
-                            print(f"¡Acertaste ({numero_ataque})! Amenaza baja a {nivel_amenaza}")
+                            print(f"\n>>> ¡ACERTASTE (Era {numero_ataque})! Amenaza baja a {nivel_amenaza}. <<<")
                         elif opcion == 3 and numero_ataque == 5:
                             nivel_amenaza -= 30
-                            print(f"¡CRÍTICO (5)! Amenaza baja a {nivel_amenaza}")
+                            print(f"\n>>> ¡CRÍTICO! Amenaza baja a {nivel_amenaza}. <<<")
                         else:
-                            print(f"Fallaste (Era {numero_ataque}). No hay daño.")
+                            print(f"\n>>> FALLASTE (Era {numero_ataque}). No hay daño. <<<")
                         turno_gastado = True
                     case 3:
-                        # Analizar estado no cambia 'accion_completada', por lo que repite el menú
-                        print(f"\n--- ESTADO: Turno {turno}, Seguridad {seguridad}, Amenaza {nivel_amenaza} ---")
+                        # analizar estado no gasta turno
+                        print(f"\n=== ESTADO ===")
+                        print("Turno:", turno)
+                        print("Seguridad:", seguridad)
+                        print("Amenaza:", nivel_amenaza)
+                        print("=" * 32)
                     case _:
-                        print("Opción inválida.")
+                        print("Error. Opción inválida.")
             if nivel_amenaza <= 0:
                 nodo_neutralizado = True
-                print(f"\nNODO {nodo} NEUTRALIZADO")
+                print(f"\n=== NODO {nodo} NEUTRALIZADO ===")
                 break
             turno += 1
         # termino del turno analizar estado de la partida
         if nodo_neutralizado:
             if nodo == 3:
-                print("HAS GANADO")
+                print("=== HAS GANADO ===")
             else:
-                print("AVANZANDO AL SIGUIENTE NODO")
+                print("AVANZANDO AL SIGUIENTE NODO...")
         else:
             if nodo == 3:
-                print("FIN DE LOS TURNOS")
-                print("EVALUANDO MECANISMO DE EMERGENCIA")
+                print("=== FIN DE LOS TURNOS ===")
+                print("EVALUANDO MECANISMO DE EMERGENCIA...")
                 if nivel_amenaza <= 50:
-                    print("ACTIVANDO PROTOCOLO")
+                    print("\nACTIVANDO PROTOCOLO...")
                     probabilidad = random.randint(1, 10)
                     if probabilidad <= 3:
-                        print("EXITOSO")
+                        print("=== EXITOSO ===")
                         print("HAS GANADO")
                         return
                     else:
-                        print("FALLADO")
+                        print("=== FALLADO ===")
                         print("HAS PERDIDO")
                         return
                 else:
-                    print("NO SE ACTIVA EL MECANISMO DE EMERGENCIA")
+                    print("=== NO SE ACTIVA EL MECANISMO DE EMERGENCIA ===")
                     print("HAS PERDIDO")
                     return
             else:
-                print("FIN DE LOS TURNOS")
+                print("=== FIN DE LOS TURNOS ===")
                 print("HAS PERDIDO")
                 return
     # termina el loop externo, verificar si aun tienes vida
     if seguridad > 0:
-        print("VICTORIA TOTAL")
+        print("=== VICTORIA TOTAL ===")
 
 # loop principal
 while True:
